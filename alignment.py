@@ -7,8 +7,8 @@ import json
 
 
 LANG = "vi"
-AUDIO_FILE = "audio/Thuy-Hu-73.mp3"
-OUTPUT_JSON = "aligned_result.json"
+AUDIO_FILE = "audio/Thuy-Hu-72.mp3"
+OUTPUT_JSON = "hoi69_aligned_result.json"
 compute_type = "float16"
 
 try:
@@ -19,7 +19,7 @@ print(f"🔄 Đang chạy trên device={device}...")
 
 # 1) Load transcription model và transcribe
 print("🔄 Đang load model transcription và thực hiện transcription...")
-model = whisperx.load_model("turbo", device=device, compute_type=compute_type)
+model = whisperx.load_model("turbo", device=device, compute_type=compute_type, language=LANG)
 result = model.transcribe(AUDIO_FILE, language=LANG)
 print(f"✅ Transcription xong: {len(result.get('segments', []))} segments")
 

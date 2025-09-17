@@ -4,3 +4,4 @@ output
 .vscode
 test_gpu.py
 .env
+*.docx

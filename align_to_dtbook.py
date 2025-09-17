@@ -2,8 +2,13 @@ import json
 import xml.etree.ElementTree as ET
 from datetime import date
 
+ALIGNED_FILE="./alignResult/hoi69_aligned_result_corrected.json"
+DOC_TITLE="Hồi 69"
+P_PREFIX="hoi69"
+OUTPUT_FILE="./output/hoi69/DAISY/dtbook.xml"
+
 # Đọc file JSON
-with open("./alignResult/aligned_result_corrected.json", "r", encoding="utf-8") as f:
+with open(ALIGNED_FILE, "r", encoding="utf-8") as f:
     data = json.load(f)
 
 # ==== Tạo cấu trúc DTBook ====
@@ -20,7 +25,7 @@ head = ET.SubElement(dtbook, "head")
 meta_info = {
     "dtb:uid": "AUTO-UID-7016948210013975649-packaged",
     "dtb:generator": "JSON-to-DTBook Python Script",
-    "dc:Title": "Hoi70",
+    "dc:Title": DOC_TITLE,
     "dc:Creator": "Thi Nai Am",
     "dc:Date": str(date.today()),
     "dc:Publisher": "NXB Van Hoc",
@@ -37,7 +42,7 @@ book = ET.SubElement(dtbook, "book", {"showin": "blp"})
 frontmatter = ET.SubElement(book, "frontmatter")
 
 doctitle = ET.SubElement(frontmatter, "doctitle", {"id": "forsmil-1", "smilref": "mo0.smil#sforsmil-1"})
-ET.SubElement(doctitle, "sent", {"id": "id_1", "smilref": "mo0.smil#sid_1"}).text = "Hồi 70"
+ET.SubElement(doctitle, "sent", {"id": "id_1", "smilref": "mo0.smil#sid_1"}).text = DOC_TITLE
 
 docauthor = ET.SubElement(frontmatter, "docauthor", {"id": "forsmil-2", "smilref": "mo0.smil#sforsmil-2"})
 ET.SubElement(docauthor, "sent", {"id": "id_2", "smilref": "mo0.smil#sid_2"}).text = "Thi Nai Am"
@@ -53,7 +58,7 @@ ET.SubElement(h1, "sent", {"id": "id_3", "smilref": "mo0.smil#sid_3"}).text = "S
 sent_id_counter = 4
 para_counter = 1
 for seg in data["segments"]:
-    p = ET.SubElement(level1, "p", {"id": f"hoi70_{para_counter}",
+    p = ET.SubElement(level1, "p", {"id": f"{P_PREFIX}_{para_counter}",
     "smilref": f"mo0.smil#seq_{para_counter}"})
     ET.SubElement(p, "sent", {
         "id": f"id_{sent_id_counter}",
@@ -64,9 +69,9 @@ for seg in data["segments"]:
 
 xml_str = ET.tostring(dtbook, encoding="utf-8", xml_declaration=False)
 
-with open("./output/hoi70/dtbook.xml", "wb") as f:
+with open(OUTPUT_FILE, "wb") as f:
     f.write(b'<?xml version="1.0" encoding="utf-8"?>\n')
     f.write(b'<!DOCTYPE dtbook PUBLIC "-//NISO//DTD dtbook 2005-3//EN" "http://www.daisy.org/z3986/2005/dtbook-2005-3.dtd">\n')
     f.write(xml_str)
 
-print("✅ Đã tạo file ./output/hoi70/dtbook.xml thành công!")
+print(f"✅ Đã tạo file {OUTPUT_FILE} thành công!")

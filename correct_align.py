@@ -4,6 +4,10 @@ import ollama
 import re
 from difflib import SequenceMatcher
 
+JSON_PATH="./alignResult/hoi69_aligned_result.json"
+OUTPUT="./alignResult/hoi69_aligned_result_corrected.json"
+DOC_INPUT="Hoi69.docx"
+
 def find_best_match(target_text, reference_text, threshold=0.6):
     """
     Tìm đoạn text tương đồng nhất trong reference
@@ -45,11 +49,11 @@ def remove_text_from_reference(reference_text, start_word_idx, end_word_idx):
     return " ".join(remaining_words)
 
 # Đọc file Word tham chiếu
-doc = docx.Document("Hoi70.docx")
+doc = docx.Document(DOC_INPUT)
 ref_text = " ".join([p.text for p in doc.paragraphs if p.text.strip()])
 
 # Đọc file JSON chứa segment
-with open("./alignResult/aligned_result.json", "r", encoding="utf-8") as f:
+with open(JSON_PATH, "r", encoding="utf-8") as f:
     data = json.load(f)
 
 print(f"Độ dài reference ban đầu: {len(ref_text.split())} từ\n")
@@ -63,14 +67,20 @@ for i, seg in enumerate(data["segments"]):
     matched_ref, start_idx, end_idx = find_best_match(seg_text, ref_text)
     
     if matched_ref:
-        print(f"Tìm thấy reference: {matched_ref[:100]}{'...' if len(matched_ref) > 100 else ''}")
+        print(f"Tìm thấy reference: {matched_ref}")
         
         # Gọi LLaMA 3 để hiệu đính
-        prompt = (f"Đây là đoạn văn nhận dạng từ giọng nói:\n{seg_text}\n\n"
-                 f"Đây là phần văn bản chuẩn chính tả để tham khảo:\n{matched_ref}\n\n"
-                 "Hãy hiệu đính đoạn văn gốc sao cho khớp chính tả với văn bản tham chiếu. "
-                 "Chỉ trả về phần text đã được hiệu đính, không giải thích thêm. "
-                 "Không xóa bớt hay thêm từ mới, chỉ sửa chính tả và dấu câu.")
+        prompt = (
+            "Bạn là chuyên gia về tiếng Việt, có nhiệm vụ hiệu đính chính tả.\n\n"
+            f"Đoạn văn nhận dạng từ giọng nói:\n{seg_text}\n\n"
+            f"Văn bản chuẩn để tham khảo:\n{matched_ref}\n\n"
+            "Yêu cầu:\n"
+            "- Hiệu đính chính tả và dấu câu của đoạn văn gốc để khớp với văn bản tham chiếu.\n"
+            "- Giữ nguyên số lượng từ, không được thêm hoặc bớt từ.\n"
+            "- Chỉ trả về văn bản đã hiệu đính, không được giải thích, không thêm tiêu đề hay mô tả như "
+            "'Đây là kết quả' hoặc 'Here is the revised text'.\n"
+            "- Trả về kết quả dưới dạng văn bản thuần túy."
+        )
         
         try:
             response = ollama.chat(
@@ -84,7 +94,7 @@ for i, seg in enumerate(data["segments"]):
             lines = corrected.split('\n')
             corrected = lines[0] if lines else corrected
             
-            print(f"Sau hiệu đính: {corrected}")
+            print(f"Sau correct: {corrected}")
             
             # Cập nhật segment
             seg["text"] = corrected
@@ -102,7 +112,7 @@ for i, seg in enumerate(data["segments"]):
     print()
 
 # Lưu file kết quả
-with open("aligned_result_corrected.json", "w", encoding="utf-8") as f:
+with open(OUTPUT, "w", encoding="utf-8") as f:
     json.dump(data, f, ensure_ascii=False, indent=2)
 
-print("Hoàn thành! Kết quả đã lưu vào aligned_result_corrected.json")
+print(f"Hoàn thành! Kết quả đã lưu vào {OUTPUT}")
