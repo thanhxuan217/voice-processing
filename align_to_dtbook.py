@@ -53,7 +53,8 @@ ET.SubElement(h1, "sent", {"id": "id_3", "smilref": "mo0.smil#sid_3"}).text = "S
 sent_id_counter = 4
 para_counter = 1
 for seg in data["segments"]:
-    p = ET.SubElement(level1, "p", {"id": f"hoi70_{para_counter}", "smilref": f"mo0.smil#shoi70_{para_counter}"})
+    p = ET.SubElement(level1, "p", {"id": f"hoi70_{para_counter}",
+    "smilref": f"mo0.smil#seq_{para_counter}"})
     ET.SubElement(p, "sent", {
         "id": f"id_{sent_id_counter}",
         "smilref": f"mo0.smil#sid_{sent_id_counter}"
@@ -61,7 +62,7 @@ for seg in data["segments"]:
     sent_id_counter += 1
     para_counter += 1
 
-xml_str = ET.tostring(dtbook, encoding="utf-8", xml_declaration=True)
+xml_str = ET.tostring(dtbook, encoding="utf-8", xml_declaration=False)
 
 with open("./output/hoi70/dtbook.xml", "wb") as f:
     f.write(b'<?xml version="1.0" encoding="utf-8"?>\n')
