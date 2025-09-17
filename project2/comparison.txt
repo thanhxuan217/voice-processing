@@ -1,0 +1,3 @@
+(c): So sánh 2 con số (a) và (b) và giải thích lý do tại sao có sự chênh lệch
+này?
+-> Vì có sự bất hợp lý trong âm tiết tiếng việt khi có nhiều âm tiết khác nhau về cách viết nhưng lại giống nhau về cách phát âm
