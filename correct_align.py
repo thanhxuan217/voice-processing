@@ -4,9 +4,9 @@ import ollama
 import re
 from difflib import SequenceMatcher
 
-JSON_PATH="./alignResult/hoi69_aligned_result.json"
-OUTPUT="./alignResult/hoi69_aligned_result_corrected.json"
-DOC_INPUT="Hoi69.docx"
+JSON_PATH="./alignResult/hoi68_aligned_result.json"
+OUTPUT="./alignResult/hoi68_aligned_result_corrected.json"
+DOC_INPUT="Hoi68.docx"
 
 def find_best_match(target_text, reference_text, threshold=0.6):
     """

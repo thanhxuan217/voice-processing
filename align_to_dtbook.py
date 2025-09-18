@@ -2,10 +2,10 @@ import json
 import xml.etree.ElementTree as ET
 from datetime import date
 
-ALIGNED_FILE="./alignResult/hoi69_aligned_result_corrected.json"
-DOC_TITLE="Hồi 69"
-P_PREFIX="hoi69"
-OUTPUT_FILE="./output/hoi69/DAISY/dtbook.xml"
+ALIGNED_FILE="./alignResult/hoi68_aligned_result_corrected.json"
+DOC_TITLE="Hồi 68"
+P_PREFIX="hoi68"
+OUTPUT_FILE="./output/hoi68/DAISY/dtbook.xml"
 
 # Đọc file JSON
 with open(ALIGNED_FILE, "r", encoding="utf-8") as f:

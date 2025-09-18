@@ -1,10 +1,10 @@
 import json
 import xml.etree.ElementTree as ET
 
-AUDIO_PATH="Hoi69.mp3"
-DTBOOK_PATH="./output/hoi69/DAISY/dtbook.xml"
-ALIGNED_FILE="./alignResult/hoi69_aligned_result_corrected.json"
-OUTPUT="./output/hoi69/DAISY/mo0.smil"
+AUDIO_PATH="Hoi68.mp3"
+DTBOOK_PATH="./output/hoi68/DAISY/dtbook.xml"
+ALIGNED_FILE="./alignResult/hoi68_aligned_result_corrected.json"
+OUTPUT="./output/hoi68/DAISY/mo0.smil"
 
 def generate_smil(xml_file, json_file, smil_file):
     # ====== Đọc file JSON ======

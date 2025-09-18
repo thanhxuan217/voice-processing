@@ -7,8 +7,8 @@ import json
 
 
 LANG = "vi"
-AUDIO_FILE = "audio/Thuy-Hu-72.mp3"
-OUTPUT_JSON = "hoi69_aligned_result.json"
+AUDIO_FILE = "audio/6375-bo-sach-canh-dieu-ngu-van-lop-6-tap-hai.mp3"
+OUTPUT_JSON = "ngu_van_aligned_result.json"
 compute_type = "float16"
 
 try:

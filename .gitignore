@@ -5,3 +5,4 @@ output
 test_gpu.py
 .env
 *.docx
+*.pdf
