@@ -9,7 +9,8 @@ import shutil
 
 BASE_OUTPUT_DIR="./output"
 
-range = range(1, 71)
+range = range(1, 2)
+# range = range(1, 71)
 
 # Tạo thư mục output cho các hồi
 create_dir(range, BASE_OUTPUT_DIR)

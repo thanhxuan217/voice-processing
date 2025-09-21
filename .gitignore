@@ -1,10 +1,7 @@
 alignResult*
-audio
 output
 .vscode
 test_gpu.py
 .env
-*.docx
 *.pdf
 speech_to_text_1_18
-doc
