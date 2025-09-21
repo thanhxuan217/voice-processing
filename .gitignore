@@ -7,3 +7,4 @@ test_gpu.py
 *.docx
 *.pdf
 speech_to_text_1_18
+doc

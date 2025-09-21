@@ -1,11 +1,8 @@
 import os
 
-# Thư mục gốc
-BASE_DIR = "output"
-
 opf_template = """<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE package
-  PUBLIC "+//ISBN 0-9673008-1-9//DTD OEB 1.2 Package//EN" "http://openebook.org/dtds/oeb-1.2/oebpkg12.dtd">
+PUBLIC "+//ISBN 0-9673008-1-9//DTD OEB 1.2 Package//EN" "http://openebook.org/dtds/oeb-1.2/oebpkg12.dtd">
 <package xmlns="http://openebook.org/namespaces/oeb-package/1.0/"
          unique-identifier="uid">
    <metadata>
@@ -44,7 +41,7 @@ opf_template = """<?xml version="1.0" encoding="utf-8"?>
 
 ncx_template = """<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE ncx
-  PUBLIC "-//NISO//DTD ncx 2005-1//EN" "http://www.daisy.org/z3986/2005/ncx-2005-1.dtd">
+PUBLIC "-//NISO//DTD ncx 2005-1//EN" "http://www.daisy.org/z3986/2005/ncx-2005-1.dtd">
 <ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1">
    <head>
       <meta content="DAISY Pipeline 2" name="dtb:generator"/>
@@ -79,75 +76,71 @@ ncx_template = """<?xml version="1.0" encoding="utf-8"?>
 
 resources_template = """<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE resources
-  PUBLIC "-//NISO//DTD resource 2005-1//EN" "http://www.daisy.org/z3986/2005/resource-2005-1.dtd">
+PUBLIC "-//NISO//DTD resource 2005-1//EN" "http://www.daisy.org/z3986/2005/resource-2005-1.dtd">
 <resources xmlns="http://www.daisy.org/z3986/2005/resource/" version="2005-1">
-	<scope nsuri="http://www.daisy.org/z3986/2005/ncx/">
-		<nodeSet id="page-set" select="//smilCustomTest[@bookStruct='PAGE_NUMBER']">
-			<resource xml:lang="en">
-				<text>page</text>
-			</resource>
-		</nodeSet>
-		<nodeSet id="note-set" select="//smilCustomTest[@bookStruct='NOTE']">
-			<resource xml:lang="en">
-				<text>note</text>
-			</resource>
-		</nodeSet>
-		<nodeSet id="notref-set" select="//smilCustomTest[@bookStruct='NOTE_REFERENCE']">
-			<resource xml:lang="en">
-				<text>note</text>
-			</resource>
-		</nodeSet>
-		<nodeSet id="annot-set" select="//smilCustomTest[@bookStruct='ANNOTATION']">
-			<resource xml:lang="en">
-				<text>annotation</text>
-			</resource>
-		</nodeSet>
-		<nodeSet id="line-set" select="//smilCustomTest[@bookStruct='LINE_NUMBER']">
-			<resource xml:lang="en">
-				<text>line</text>
-			</resource>
-		</nodeSet>
-		<nodeSet id="sidebar-set" select="//smilCustomTest[@bookStruct='OPTIONAL_SIDEBAR']">
-			<resource xml:lang="en">
-				<text>sidebar</text>
-			</resource>
-		</nodeSet>
-		<nodeSet id="prodnote-set" select="//smilCustomTest[@bookStruct='OPTIONAL_PRODUCER_NOTE']">
-			<resource xml:lang="en">
-				<text>note</text>
-			</resource>
-		</nodeSet>
-	</scope>
-	<scope nsuri="http://www.w3.org/2001/SMIL20/">
-		<nodeSet id="math-seq-set" select="//seq[@class='math']">
-			<resource xml:lang="en">
-				<text>mathematical formula</text>
-			</resource>
-		</nodeSet>
-		<nodeSet id="math-par-set" select="//par[@class='math']">
-			<resource xml:lang="en">
-				<text>mathematical formula</text>
-			</resource>
-		</nodeSet>
-	</scope>
+   <scope nsuri="http://www.daisy.org/z3986/2005/ncx/">
+      <nodeSet id="page-set" select="//smilCustomTest[@bookStruct='PAGE_NUMBER']">
+         <resource xml:lang="en">
+            <text>page</text>
+         </resource>
+      </nodeSet>
+      <nodeSet id="note-set" select="//smilCustomTest[@bookStruct='NOTE']">
+         <resource xml:lang="en">
+            <text>note</text>
+         </resource>
+      </nodeSet>
+      <nodeSet id="notref-set" select="//smilCustomTest[@bookStruct='NOTE_REFERENCE']">
+         <resource xml:lang="en">
+            <text>note</text>
+         </resource>
+      </nodeSet>
+      <nodeSet id="annot-set" select="//smilCustomTest[@bookStruct='ANNOTATION']">
+         <resource xml:lang="en">
+            <text>annotation</text>
+         </resource>
+      </nodeSet>
+      <nodeSet id="line-set" select="//smilCustomTest[@bookStruct='LINE_NUMBER']">
+         <resource xml:lang="en">
+            <text>line</text>
+         </resource>
+      </nodeSet>
+      <nodeSet id="sidebar-set" select="//smilCustomTest[@bookStruct='OPTIONAL_SIDEBAR']">
+         <resource xml:lang="en">
+            <text>sidebar</text>
+         </resource>
+      </nodeSet>
+      <nodeSet id="prodnote-set" select="//smilCustomTest[@bookStruct='OPTIONAL_PRODUCER_NOTE']">
+         <resource xml:lang="en">
+            <text>note</text>
+         </resource>
+      </nodeSet>
+   </scope>
+   <scope nsuri="http://www.w3.org/2001/SMIL20/">
+      <nodeSet id="math-seq-set" select="//seq[@class='math']">
+         <resource xml:lang="en">
+            <text>mathematical formula</text>
+         </resource>
+      </nodeSet>
+      <nodeSet id="math-par-set" select="//par[@class='math']">
+         <resource xml:lang="en">
+            <text>mathematical formula</text>
+         </resource>
+      </nodeSet>
+   </scope>
 </resources>
 """
 
-# Sinh thư mục & file cho Hồi 1 -> 18
-for i in range(1, 19):
-    folder = os.path.join(BASE_DIR, f"hoi{i}", f"[Thuỷ Hử] Hồi {i}")
-    os.makedirs(folder, exist_ok=True)
+def create_daisy_file(book_path, nav_path, res_path, i):
+   # Tạo book.opf
+   with open(book_path, "w", encoding="utf-8") as f:
+      f.write(opf_template.format(num=i))
 
-    # Tạo book.opf
-    with open(os.path.join(folder, "book.opf"), "w", encoding="utf-8") as f:
-        f.write(opf_template.format(num=i))
+   # Tạo navigation.ncx
+   with open(nav_path, "w", encoding="utf-8") as f:
+      f.write(ncx_template.format(num=i))
 
-    # Tạo navigation.ncx
-    with open(os.path.join(folder, "navigation.ncx"), "w", encoding="utf-8") as f:
-        f.write(ncx_template.format(num=i))
+   # Tạo resources.res (giữ nguyên)
+   with open(res_path, "w", encoding="utf-8") as f:
+      f.write(resources_template)
 
-    # Tạo resources.res (giữ nguyên)
-    with open(os.path.join(folder, "resources.res"), "w", encoding="utf-8") as f:
-        f.write(resources_template)
-
-print("✅ Đã tạo xong 18 thư mục, mỗi thư mục có book.opf, navigation.ncx, resources.res")
+   print("✅ Đã tạo xong book.opf, navigation.ncx, resources.res")

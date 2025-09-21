@@ -1,16 +1,12 @@
 import json
 import xml.etree.ElementTree as ET
 from datetime import date
-import os
 
-def tao_dtbook(hoi: int, base_input="./alignResult2", base_output="./output"):
-    ALIGNED_FILE = os.path.join(base_input, f"hoi{hoi}_aligned_result_corrected.json")
+def create_dtbook(align_file, hoi, output):
     DOC_TITLE = f"Hồi {hoi}"
     P_PREFIX = f"hoi{hoi}"
-    OUTPUT_FILE = os.path.join(base_output, f"hoi{hoi}", f"[Thuỷ Hử] Hồi {hoi}", "dtbook.xml")
-
     # Đọc file JSON
-    with open(ALIGNED_FILE, "r", encoding="utf-8") as f:
+    with open(align_file, "r", encoding="utf-8") as f:
         data = json.load(f)
 
     # ==== Tạo cấu trúc DTBook ====
@@ -71,14 +67,9 @@ def tao_dtbook(hoi: int, base_input="./alignResult2", base_output="./output"):
 
     xml_str = ET.tostring(dtbook, encoding="utf-8", xml_declaration=False)
 
-    with open(OUTPUT_FILE, "wb") as f:
+    with open(output, "wb") as f:
         f.write(b'<?xml version="1.0" encoding="utf-8"?>\n')
         f.write(b'<!DOCTYPE dtbook PUBLIC "-//NISO//DTD dtbook 2005-3//EN" "http://www.daisy.org/z3986/2005/dtbook-2005-3.dtd">\n')
         f.write(xml_str)
 
-    print(f"✅ Đã tạo file {OUTPUT_FILE} thành công!")
-
-if __name__ == "__main__":
-    # Ví dụ: chạy từ hồi 1 đến 18
-    for i in range(1, 19):
-        tao_dtbook(i)
+    print(f"✅ Đã tạo file {output} thành công!")

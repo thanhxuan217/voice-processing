@@ -2,7 +2,6 @@ from xml.etree.ElementTree import Element, SubElement, ElementTree
 import whisperx
 import torch
 from lxml import etree
-import os
 import json
 
 LANG = "vi"
@@ -43,10 +42,3 @@ def alignment(audio_path, output_path):
         json.dump(export_data, f, ensure_ascii=False, indent=2, default=str)
 
     print(f"✅ Đã xuất kết quả alignment: {output_path}")
-
-if __name__ == "__main__":
-    # Ví dụ: chạy từ hồi 1 đến 18
-    for i in range(1, 19):
-        AUDIO_FILE = f"./audio/Thuy-Hu-{i}.mp3"
-        OUTPUT_JSON = f"./alignResult/hoi{i}_aligned_result.json"
-        alignment(AUDIO_FILE, OUTPUT_JSON)

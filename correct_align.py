@@ -1,14 +1,8 @@
 import json
 import docx
 import ollama
-import re
 from difflib import SequenceMatcher
 
-HOI_LIST = ["hoi1", "hoi2", "hoi3", "hoi4", "hoi5", "hoi6"
-, "hoi7", "hoi8", "hoi9", "hoi10", "hoi11", "hoi12", "hoi13", "hoi14", "hoi15", "hoi16", "hoi17", "hoi18"]  # <-- thêm các file ở đây
-JSON_DIR = "./speech_to_text_1_18/"
-DOC_DIR = "./doc/"
-OUTPUT_DIR = "./alignResult2/"
 
 def find_best_match(target_text, reference_text, threshold=0.6):
     """
@@ -50,18 +44,14 @@ def remove_text_from_reference(reference_text, start_word_idx, end_word_idx):
     remaining_words = words[:start_word_idx] + words[end_word_idx:]
     return " ".join(remaining_words)
 
-def process_file(base_name):
-    JSON_PATH = f"{JSON_DIR}{base_name}_aligned_result.json"
-    DOC_INPUT = f"{DOC_DIR}{base_name.capitalize()}.docx"
-    OUTPUT = f"{OUTPUT_DIR}{base_name}_aligned_result_corrected.json"
-
-    print(f"\n=== Xử lý {base_name} ===")
+def correct_text(align_result, doc_input, correct_output):
+    print(f"\n=== Xử lý {align_result} ===")
     # Đọc file Word tham chiếu
-    doc = docx.Document(DOC_INPUT)
+    doc = docx.Document(doc_input)
     ref_text = " ".join([p.text for p in doc.paragraphs if p.text.strip()])
 
     # Đọc file JSON chứa segment
-    with open(JSON_PATH, "r", encoding="utf-8") as f:
+    with open(align_result, "r", encoding="utf-8") as f:
         data = json.load(f)
 
     print(f"Độ dài reference ban đầu: {len(ref_text.split())} từ\n")
@@ -120,11 +110,7 @@ def process_file(base_name):
         print()
 
     # Lưu file kết quả
-    with open(OUTPUT, "w", encoding="utf-8") as f:
+    with open(correct_output, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
-    print(f"Hoàn thành! Kết quả đã lưu vào {OUTPUT}")
-    
-if __name__ == "__main__":
-    for hoi in HOI_LIST:
-        process_file(hoi)
+    print(f"Hoàn thành! Kết quả đã lưu vào {correct_output}")

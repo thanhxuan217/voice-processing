@@ -76,15 +76,3 @@ def generate_smil(xml_file, json_file, smil_file, audio_path):
         smil_tree.write(f, encoding="utf-8")
 
     print(f"✅ Đã tạo file {smil_file} thành công!")
-
-
-if __name__ == "__main__":
-    base_input="./alignResult2"
-    base_output="./output"
-    # Ví dụ: tạo SMIL cho hồi 1 đến 3
-    for i in range(1, 19):
-        AUDIO_PATH = f"Hoi{i}.mp3"
-        DTBOOK_PATH = os.path.join(base_output, f"hoi{i}", f"[Thuỷ Hử] Hồi {i}", "dtbook.xml")
-        ALIGNED_FILE = os.path.join(base_input, f"hoi{i}_aligned_result_corrected.json")
-        OUTPUT = os.path.join(base_output, f"hoi{i}", f"[Thuỷ Hử] Hồi {i}", "mo0.smil")
-        generate_smil(DTBOOK_PATH, ALIGNED_FILE, OUTPUT, AUDIO_PATH)
