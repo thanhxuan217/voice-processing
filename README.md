@@ -51,5 +51,12 @@ range = range(1, 2)
 
 ---
 
-## Bước 5: Kiểm thử
+## Bước 5: Chạy pipeline
+```python
+python ./daisy_pipeline.py
+```
+
+---
+
+## Bước 6: Kiểm thử
 Mở file sách Daisy bằng **Easy Reader** để kiểm thử kết quả.
