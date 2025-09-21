@@ -4,9 +4,11 @@ import ollama
 import re
 from difflib import SequenceMatcher
 
-JSON_PATH="./alignResult/hoi68_aligned_result.json"
-OUTPUT="./alignResult/hoi68_aligned_result_corrected.json"
-DOC_INPUT="Hoi68.docx"
+HOI_LIST = ["hoi1", "hoi2", "hoi3", "hoi4", "hoi5", "hoi6"
+, "hoi7", "hoi8", "hoi9", "hoi10", "hoi11", "hoi12", "hoi13", "hoi14", "hoi15", "hoi16", "hoi17", "hoi18"]  # <-- thêm các file ở đây
+JSON_DIR = "./speech_to_text_1_18/"
+DOC_DIR = "./doc/"
+OUTPUT_DIR = "./alignResult2/"
 
 def find_best_match(target_text, reference_text, threshold=0.6):
     """
@@ -48,71 +50,81 @@ def remove_text_from_reference(reference_text, start_word_idx, end_word_idx):
     remaining_words = words[:start_word_idx] + words[end_word_idx:]
     return " ".join(remaining_words)
 
-# Đọc file Word tham chiếu
-doc = docx.Document(DOC_INPUT)
-ref_text = " ".join([p.text for p in doc.paragraphs if p.text.strip()])
+def process_file(base_name):
+    JSON_PATH = f"{JSON_DIR}{base_name}_aligned_result.json"
+    DOC_INPUT = f"{DOC_DIR}{base_name.capitalize()}.docx"
+    OUTPUT = f"{OUTPUT_DIR}{base_name}_aligned_result_corrected.json"
 
-# Đọc file JSON chứa segment
-with open(JSON_PATH, "r", encoding="utf-8") as f:
-    data = json.load(f)
+    print(f"\n=== Xử lý {base_name} ===")
+    # Đọc file Word tham chiếu
+    doc = docx.Document(DOC_INPUT)
+    ref_text = " ".join([p.text for p in doc.paragraphs if p.text.strip()])
 
-print(f"Độ dài reference ban đầu: {len(ref_text.split())} từ\n")
+    # Đọc file JSON chứa segment
+    with open(JSON_PATH, "r", encoding="utf-8") as f:
+        data = json.load(f)
 
-for i, seg in enumerate(data["segments"]):
-    seg_text = seg["text"].strip()
-    print(f"--- Segment {i+1} ---")
-    print(f"Text gốc: {seg_text}")
-    
-    # Tìm đoạn tương ứng trong reference
-    matched_ref, start_idx, end_idx = find_best_match(seg_text, ref_text)
-    
-    if matched_ref:
-        print(f"Tìm thấy reference: {matched_ref}")
+    print(f"Độ dài reference ban đầu: {len(ref_text.split())} từ\n")
+
+    for i, seg in enumerate(data["segments"]):
+        seg_text = seg["text"].strip()
+        print(f"--- Segment {i+1} ---")
+        print(f"Text gốc: {seg_text}")
         
-        # Gọi LLaMA 3 để hiệu đính
-        prompt = (
-            "Bạn là chuyên gia về tiếng Việt, có nhiệm vụ hiệu đính chính tả.\n\n"
-            f"Đoạn văn nhận dạng từ giọng nói:\n{seg_text}\n\n"
-            f"Văn bản chuẩn để tham khảo:\n{matched_ref}\n\n"
-            "Yêu cầu:\n"
-            "- Hiệu đính chính tả và dấu câu của đoạn văn gốc để khớp với văn bản tham chiếu.\n"
-            "- Giữ nguyên số lượng từ, không được thêm hoặc bớt từ.\n"
-            "- Chỉ trả về văn bản đã hiệu đính, không được giải thích, không thêm tiêu đề hay mô tả như "
-            "'Đây là kết quả' hoặc 'Here is the revised text'.\n"
-            "- Trả về kết quả dưới dạng văn bản thuần túy."
-        )
+        # Tìm đoạn tương ứng trong reference
+        matched_ref, start_idx, end_idx = find_best_match(seg_text, ref_text)
         
-        try:
-            response = ollama.chat(
-                model="llama3",
-                messages=[{"role": "user", "content": prompt}],
+        if matched_ref:
+            print(f"Tìm thấy reference: {matched_ref}")
+            
+            # Gọi LLaMA 3 để hiệu đính
+            prompt = (
+                "Bạn là chuyên gia về tiếng Việt, có nhiệm vụ hiệu đính chính tả.\n\n"
+                f"Đoạn văn nhận dạng từ giọng nói:\n{seg_text}\n\n"
+                f"Văn bản chuẩn để tham khảo:\n{matched_ref}\n\n"
+                "Yêu cầu:\n"
+                "- Hiệu đính chính tả và dấu câu của đoạn văn gốc để khớp với văn bản tham chiếu.\n"
+                "- Giữ nguyên số lượng từ, không được thêm hoặc bớt từ.\n"
+                "- Chỉ trả về văn bản đã hiệu đính, không được giải thích, không thêm tiêu đề hay mô tả như "
+                "'Đây là kết quả' hoặc 'Here is the revised text'.\n"
+                "- Trả về kết quả dưới dạng văn bản thuần túy."
             )
             
-            corrected = response["message"]["content"].strip()
-            
-            # Loại bỏ các dòng giải thích nếu có
-            lines = corrected.split('\n')
-            corrected = lines[0] if lines else corrected
-            
-            print(f"Sau correct: {corrected}")
-            
-            # Cập nhật segment
-            seg["text"] = corrected
-            
-            # Loại bỏ đoạn đã sử dụng khỏi reference
-            ref_text = remove_text_from_reference(ref_text, start_idx, end_idx)
-            print(f"Còn lại {len(ref_text.split())} từ trong reference")
-            
-        except Exception as e:
-            print(f"Lỗi khi gọi LLaMA: {e}")
-            print("Giữ nguyên text gốc")
-    else:
-        print("Không tìm thấy reference phù hợp, giữ nguyên text gốc")
+            try:
+                response = ollama.chat(
+                    model="llama3",
+                    messages=[{"role": "user", "content": prompt}],
+                )
+                
+                corrected = response["message"]["content"].strip()
+                
+                # Loại bỏ các dòng giải thích nếu có
+                lines = corrected.split('\n')
+                corrected = lines[0] if lines else corrected
+                
+                print(f"Sau correct: {corrected}")
+                
+                # Cập nhật segment
+                seg["text"] = corrected
+                
+                # Loại bỏ đoạn đã sử dụng khỏi reference
+                ref_text = remove_text_from_reference(ref_text, start_idx, end_idx)
+                print(f"Còn lại {len(ref_text.split())} từ trong reference")
+                
+            except Exception as e:
+                print(f"Lỗi khi gọi LLaMA: {e}")
+                print("Giữ nguyên text gốc")
+        else:
+            print("Không tìm thấy reference phù hợp, giữ nguyên text gốc")
+        
+        print()
+
+    # Lưu file kết quả
+    with open(OUTPUT, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
+    print(f"Hoàn thành! Kết quả đã lưu vào {OUTPUT}")
     
-    print()
-
-# Lưu file kết quả
-with open(OUTPUT, "w", encoding="utf-8") as f:
-    json.dump(data, f, ensure_ascii=False, indent=2)
-
-print(f"Hoàn thành! Kết quả đã lưu vào {OUTPUT}")
+if __name__ == "__main__":
+    for hoi in HOI_LIST:
+        process_file(hoi)

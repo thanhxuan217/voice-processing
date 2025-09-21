@@ -1,12 +1,8 @@
 import json
 import xml.etree.ElementTree as ET
+import os
 
-AUDIO_PATH="Hoi68.mp3"
-DTBOOK_PATH="./output/hoi68/DAISY/dtbook.xml"
-ALIGNED_FILE="./alignResult/hoi68_aligned_result_corrected.json"
-OUTPUT="./output/hoi68/DAISY/mo0.smil"
-
-def generate_smil(xml_file, json_file, smil_file):
+def generate_smil(xml_file, json_file, smil_file, audio_path):
     # ====== Đọc file JSON ======
     with open(json_file, "r", encoding="utf-8") as f:
         data = json.load(f)
@@ -66,7 +62,7 @@ def generate_smil(xml_file, json_file, smil_file):
             par,
             "audio",
             {
-                "src": AUDIO_PATH,
+                "src": audio_path,
                 "clipBegin": f"{seg['start']:.3f}s",
                 "clipEnd": f"{seg['end']:.3f}s"
             }
@@ -81,5 +77,14 @@ def generate_smil(xml_file, json_file, smil_file):
 
     print(f"✅ Đã tạo file {smil_file} thành công!")
 
-# ====== Gọi hàm ======
-generate_smil(DTBOOK_PATH, ALIGNED_FILE, OUTPUT)
+
+if __name__ == "__main__":
+    base_input="./alignResult2"
+    base_output="./output"
+    # Ví dụ: tạo SMIL cho hồi 1 đến 3
+    for i in range(1, 19):
+        AUDIO_PATH = f"Hoi{i}.mp3"
+        DTBOOK_PATH = os.path.join(base_output, f"hoi{i}", f"[Thuỷ Hử] Hồi {i}", "dtbook.xml")
+        ALIGNED_FILE = os.path.join(base_input, f"hoi{i}_aligned_result_corrected.json")
+        OUTPUT = os.path.join(base_output, f"hoi{i}", f"[Thuỷ Hử] Hồi {i}", "mo0.smil")
+        generate_smil(DTBOOK_PATH, ALIGNED_FILE, OUTPUT, AUDIO_PATH)

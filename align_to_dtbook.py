@@ -1,77 +1,84 @@
 import json
 import xml.etree.ElementTree as ET
 from datetime import date
+import os
 
-ALIGNED_FILE="./alignResult/hoi68_aligned_result_corrected.json"
-DOC_TITLE="Hồi 68"
-P_PREFIX="hoi68"
-OUTPUT_FILE="./output/hoi68/DAISY/dtbook.xml"
+def tao_dtbook(hoi: int, base_input="./alignResult2", base_output="./output"):
+    ALIGNED_FILE = os.path.join(base_input, f"hoi{hoi}_aligned_result_corrected.json")
+    DOC_TITLE = f"Hồi {hoi}"
+    P_PREFIX = f"hoi{hoi}"
+    OUTPUT_FILE = os.path.join(base_output, f"hoi{hoi}", f"[Thuỷ Hử] Hồi {hoi}", "dtbook.xml")
 
-# Đọc file JSON
-with open(ALIGNED_FILE, "r", encoding="utf-8") as f:
-    data = json.load(f)
+    # Đọc file JSON
+    with open(ALIGNED_FILE, "r", encoding="utf-8") as f:
+        data = json.load(f)
 
-# ==== Tạo cấu trúc DTBook ====
-NS = "http://www.daisy.org/z3986/2005/dtbook/"
-ET.register_namespace('', NS)
+    # ==== Tạo cấu trúc DTBook ====
+    NS = "http://www.daisy.org/z3986/2005/dtbook/"
+    ET.register_namespace('', NS)
 
-dtbook = ET.Element("{%s}dtbook" % NS, {
-    "xml:lang": "vi-VN",
-    "version": "2005-3"
-})
+    dtbook = ET.Element("{%s}dtbook" % NS, {
+        "xml:lang": "vi-VN",
+        "version": "2005-3"
+    })
 
-# ---- HEAD ----
-head = ET.SubElement(dtbook, "head")
-meta_info = {
-    "dtb:uid": "AUTO-UID-7016948210013975649-packaged",
-    "dtb:generator": "JSON-to-DTBook Python Script",
-    "dc:Title": DOC_TITLE,
-    "dc:Creator": "Thi Nai Am",
-    "dc:Date": str(date.today()),
-    "dc:Publisher": "NXB Van Hoc",
-    "dc:Identifier": "AUTO-UID-7016948210013975649-packaged",
-    "dc:Language": "vi-VN",
-}
-for k, v in meta_info.items():
-    ET.SubElement(head, "meta", {"name": k, "content": v})
+    # ---- HEAD ----
+    head = ET.SubElement(dtbook, "head")
+    meta_info = {
+        "dtb:uid": "9786043494594",
+        "dtb:generator": "JSON-to-DTBook Python Script",
+        "dc:Title": DOC_TITLE,
+        "dc:Creator": "",
+        "dc:Date": str(date.today()),
+        "dc:Publisher": "Đại Học Sư Phạm",
+        "dc:Identifier": "9786043494594",
+        "dc:Language": "vi-VN",
+    }
+    for k, v in meta_info.items():
+        ET.SubElement(head, "meta", {"name": k, "content": v})
 
-# ---- BOOK ----
-book = ET.SubElement(dtbook, "book", {"showin": "blp"})
+    # ---- BOOK ----
+    book = ET.SubElement(dtbook, "book", {"showin": "blp"})
 
-# ---- FRONTMATTER ----
-frontmatter = ET.SubElement(book, "frontmatter")
+    # ---- FRONTMATTER ----
+    frontmatter = ET.SubElement(book, "frontmatter")
 
-doctitle = ET.SubElement(frontmatter, "doctitle", {"id": "forsmil-1", "smilref": "mo0.smil#sforsmil-1"})
-ET.SubElement(doctitle, "sent", {"id": "id_1", "smilref": "mo0.smil#sid_1"}).text = DOC_TITLE
+    doctitle = ET.SubElement(frontmatter, "doctitle", {"id": "forsmil-1", "smilref": "mo0.smil#sforsmil-1"})
+    ET.SubElement(doctitle, "sent", {"id": "id_1", "smilref": "mo0.smil#sid_1"}).text = DOC_TITLE
 
-docauthor = ET.SubElement(frontmatter, "docauthor", {"id": "forsmil-2", "smilref": "mo0.smil#sforsmil-2"})
-ET.SubElement(docauthor, "sent", {"id": "id_2", "smilref": "mo0.smil#sid_2"}).text = "Thi Nai Am"
+    docauthor = ET.SubElement(frontmatter, "docauthor", {"id": "forsmil-2", "smilref": "mo0.smil#sforsmil-2"})
+    ET.SubElement(docauthor, "sent", {"id": "id_2", "smilref": "mo0.smil#sid_2"}).text = "Thi Nai Am"
 
-# ---- BODYMATTER ----
-bodymatter = ET.SubElement(book, "bodymatter", {"id": "bodymatter_0001"})
-level1 = ET.SubElement(bodymatter, "level1")
+    # ---- BODYMATTER ----
+    bodymatter = ET.SubElement(book, "bodymatter", {"id": "bodymatter_0001"})
+    level1 = ET.SubElement(bodymatter, "level1")
 
-h1 = ET.SubElement(level1, "h1", {"id": "faux-heading", "smilref": "mo0.smil#sfaux-heading"})
-ET.SubElement(h1, "sent", {"id": "id_3", "smilref": "mo0.smil#sid_3"}).text = "Section"
+    h1 = ET.SubElement(level1, "h1", {"id": "faux-heading", "smilref": "mo0.smil#sfaux-heading"})
+    ET.SubElement(h1, "sent", {"id": "id_3", "smilref": "mo0.smil#sid_3"}).text = "Section"
 
-# ---- ADD PARAGRAPHS FROM JSON ----
-sent_id_counter = 4
-para_counter = 1
-for seg in data["segments"]:
-    p = ET.SubElement(level1, "p", {"id": f"{P_PREFIX}_{para_counter}",
-    "smilref": f"mo0.smil#seq_{para_counter}"})
-    ET.SubElement(p, "sent", {
-        "id": f"id_{sent_id_counter}",
-        "smilref": f"mo0.smil#sid_{sent_id_counter}"
-    }).text = seg["text"]
-    sent_id_counter += 1
-    para_counter += 1
+    # ---- ADD PARAGRAPHS FROM JSON ----
+    sent_id_counter = 4
+    para_counter = 1
+    for seg in data["segments"]:
+        p = ET.SubElement(level1, "p", {"id": f"{P_PREFIX}_{para_counter}",
+        "smilref": f"mo0.smil#seq_{para_counter}"})
+        ET.SubElement(p, "sent", {
+            "id": f"id_{sent_id_counter}",
+            "smilref": f"mo0.smil#sid_{sent_id_counter}"
+        }).text = seg["text"]
+        sent_id_counter += 1
+        para_counter += 1
 
-xml_str = ET.tostring(dtbook, encoding="utf-8", xml_declaration=False)
+    xml_str = ET.tostring(dtbook, encoding="utf-8", xml_declaration=False)
 
-with open(OUTPUT_FILE, "wb") as f:
-    f.write(b'<?xml version="1.0" encoding="utf-8"?>\n')
-    f.write(b'<!DOCTYPE dtbook PUBLIC "-//NISO//DTD dtbook 2005-3//EN" "http://www.daisy.org/z3986/2005/dtbook-2005-3.dtd">\n')
-    f.write(xml_str)
+    with open(OUTPUT_FILE, "wb") as f:
+        f.write(b'<?xml version="1.0" encoding="utf-8"?>\n')
+        f.write(b'<!DOCTYPE dtbook PUBLIC "-//NISO//DTD dtbook 2005-3//EN" "http://www.daisy.org/z3986/2005/dtbook-2005-3.dtd">\n')
+        f.write(xml_str)
 
-print(f"✅ Đã tạo file {OUTPUT_FILE} thành công!")
+    print(f"✅ Đã tạo file {OUTPUT_FILE} thành công!")
+
+if __name__ == "__main__":
+    # Ví dụ: chạy từ hồi 1 đến 18
+    for i in range(1, 19):
+        tao_dtbook(i)

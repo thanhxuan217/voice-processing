@@ -26,7 +26,9 @@ for i, seg in enumerate(data["segments"]):
         "- Giữ nguyên thuật ngữ và nội dung mang tính giáo dục, tuyệt đối không thêm hoặc bớt ý!\n"
         "- Không giải thích hay tóm tắt.\n"
         "- Văn phong phải nghiêm túc, rõ ràng, phù hợp với sách giáo khoa.\n"
-        "- Chỉ trả về văn bản đã hiệu đính, tuyệt đối không kèm tiêu đề hay mô tả hay kèm note thêm gì cả"
+        "- Không thêm dòng này Here is the revised text:\n"
+        "- Cũng không thêm note giống như vậy: (Note: No changes made to the content or wording)"
+        "- Chỉ trả về văn bản đã hiệu đính, tuyệt đối không kèm tiêu đề hay mô tả hay kèm note thêm gì cả\n"
     )
 
     try:
