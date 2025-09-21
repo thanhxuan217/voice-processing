@@ -1,4 +1,4 @@
-# Hướng dẫn tạo sách Daisy trên Python 3.10
+# Hướng dẫn tạo sách Daisy trên Python 3.10 (Project 3)
 
 ## Bước 1: Chuẩn bị dữ liệu
 1.1. Tạo thư mục `audio` và lưu các file âm thanh `.mp3` theo định dạng:  
